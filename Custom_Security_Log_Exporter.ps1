@@ -1,5 +1,5 @@
 ﻿# Get API key from here: https://ipgeolocation.io/
-$API_KEY      = "e42fe5012e114f51ad939f6c7ce53be5"
+$API_KEY      = "d326f6df42c141168bce739475b3b7cd"
 $LOGFILE_NAME = "failed_rdp.log"
 $LOGFILE_PATH = "C:\ProgramData\$($LOGFILE_NAME)"
 
@@ -27,7 +27,7 @@ while ($true)
     # This retrieves events from Windows EVent Viewer based on the filter
     $events = Get-WinEvent -FilterXml $XMLFilter -ErrorAction SilentlyContinue
     if ($Error) {
-        Write-Host "No Failed Logons found. Re-run script when a login has failed."
+        #Write-Host "No Failed Logons found. Re-run script when a login has failed."
     }
 
     # Step through each event collected, get geolocation
@@ -69,7 +69,9 @@ while ($true)
                 $latitude = $responseData.latitude
                 $longitude = $responseData.longitude
                 $state_prov = $responseData.state_prov
+                if ($state_prov -eq "") { $state_prov = "<none>" }
                 $country = $responseData.country_name
+                if ($country -eq "") {$country -eq "<none>"}
 
                 # Write all gathered data to the custom log file. It will look something like this:
                 #

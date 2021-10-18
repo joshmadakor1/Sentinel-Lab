@@ -1,5 +1,5 @@
 ﻿# Get API key from here: https://ipgeolocation.io/
-$API_KEY      = "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+$API_KEY      = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 $LOGFILE_NAME = "failed_rdp.log"
 $LOGFILE_PATH = "C:\ProgramData\$($LOGFILE_NAME)"
 
@@ -41,7 +41,35 @@ while ($true)
 
             # Pick out fields from the event. These will be inserted into our new custom log
             $timestamp = $event.TimeCreated
-            $timestamp = "$($timestamp.Year)-$($timestamp.Month)-$($timestamp.Day) $($timestamp.Hour):$($timestamp.Minute):$($timestamp.Second)"
+            $year = $event.TimeCreated.Year
+
+            $month = $event.TimeCreated.Month
+            if ("$($event.TimeCreated.Month)".Length -eq 1) {
+                $month = "0$($event.TimeCreated.Month)"
+            }
+
+            $day = $event.TimeCreated.Day
+            if ("$($event.TimeCreated.Day)".Length -eq 1) {
+                $day = "0$($event.TimeCreated.Day)"
+            }
+            
+            $hour = $event.TimeCreated.Hour
+            if ("$($event.TimeCreated.Hour)".Length -eq 1) {
+                $hour = "0$($event.TimeCreated.Hour)"
+            }
+
+            $minute = $event.TimeCreated.Minute
+            if ("$($event.TimeCreated.Minute)".Length -eq 1) {
+                $minute = "0$($event.TimeCreated.Minute)"
+            }
+
+
+            $second = $event.TimeCreated.Second
+            if ("$($event.TimeCreated.Second)".Length -eq 1) {
+                $second = "0$($event.TimeCreated.Second)"
+            }
+
+            $timestamp = "$($year)-$($month)-$($day) $($hour):$($minute):$($second)"
             $eventId = $event.Id
             $destinationHost = $event.MachineName# Workstation Name (Destination)
             $username = $event.properties[5].Value # Account Name (Attempted Logon)
@@ -69,16 +97,16 @@ while ($true)
                 $latitude = $responseData.latitude
                 $longitude = $responseData.longitude
                 $state_prov = $responseData.state_prov
-                if ($state_prov -eq "") { $state_prov = "<none>" }
+                if ($state_prov -eq "") { $state_prov = "null" }
                 $country = $responseData.country_name
-                if ($country -eq "") {$country -eq "<none>"}
+                if ($country -eq "") {$country -eq "null"}
 
                 # Write all gathered data to the custom log file. It will look something like this:
                 #
                 #    2021-10-14 16:56:51|4625|randomname123|ADMINISTRATOR|44.192.33.238|47.91542|-120.60306|Washington|United States|44.192.33.238: Washington, United States
                 #
-                "$($timestamp)|$($eventId)|$($destinationHost)|$($username)|$($sourceIp)|$($latitude)|$($longitude)|$($state_prov)|$($country)|$($sourceIp): $($state_prov), $($country)" | Out-File $LOGFILE_PATH -Append -Encoding utf8
-                Write-Host -BackgroundColor Black -ForegroundColor Green "Writing log: $($timestamp): LOGIN FAILURE: $($username), ($sourceIp): $($state_prov), $($country)"
+                "$($latitude),$($longitude),$($destinationHost),$($username),$($sourceIp),$($state_prov),$($country),$($timestamp)" | Out-File $LOGFILE_PATH -Append -Encoding utf8
+                Write-Host -BackgroundColor Black -ForegroundColor Green "$($latitude),$($longitude),$($destinationHost),$($username),$($sourceIp),$($state_prov),$($country),$($timestamp)"
             }
             else {
                 # Entry already exists in custom log file. Do nothing, optionally, remove the # from the line below for output

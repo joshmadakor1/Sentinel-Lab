@@ -1,5 +1,5 @@
 ﻿# Get API key from here: https://ipgeolocation.io/
-$API_KEY      = "xxxxxxxxxxxxxxxxxxxx"
+$API_KEY      = "d4600b4efdef42b39828f5155041a457"
 $LOGFILE_NAME = "failed_rdp.log"
 $LOGFILE_PATH = "C:\ProgramData\$($LOGFILE_NAME)"
 
@@ -105,8 +105,8 @@ while ($true)
                 #
                 #    2021-10-14 16:56:51|4625|randomname123|ADMINISTRATOR|44.192.33.238|47.91542|-120.60306|Washington|United States|44.192.33.238: Washington, United States
                 #
-                "$($timestamp),$($latitude),$($longitude),$($destinationHost),$($username),$($sourceIp),$($state_prov),$($country)" | Out-File $LOGFILE_PATH -Append -Encoding utf8
-                Write-Host -BackgroundColor Black -ForegroundColor Green "$($timestamp),$($latitude),$($longitude),$($destinationHost),$($username),$($sourceIp),$($state_prov),$($country)"
+                "$($timestamp),$($latitude),$($longitude),$($destinationHost),$($username),$($sourceIp),$($state_prov),$($country),$($country) - $($sourceIp)" | Out-File $LOGFILE_PATH -Append -Encoding utf8
+                Write-Host -BackgroundColor Black -ForegroundColor Magenta "Failed Logon!: $($timestamp),$($latitude),$($longitude),$($destinationHost),$($username),$($sourceIp),$($state_prov),$($country)"
             }
             else {
                 # Entry already exists in custom log file. Do nothing, optionally, remove the # from the line below for output

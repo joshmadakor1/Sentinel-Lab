@@ -14,6 +14,13 @@ $XMLFilter = @'
 </QueryList> 
 '@
 
+<#
+    This function creates a bunch of sample log files that will be used to train the
+    Extract feature in Log Analytics workspace. If you don't have enough log files to
+    "train" it, it will fail to extract certain fields for some reason -_-.
+    We can avoid including these fake records on our map by filtering out all logs with
+    a destination host of "samplehost"
+#>
 Function write-Sample-Log() {
     "latitude:47.91542,longitude:-120.60306,destinationhost:samplehost,username:fakeuser,sourcehost:24.16.97.222,state:Washington,country:United States - 24.16.97.222,timestamp:2021-10-26 03:28:29" | Out-File $LOGFILE_PATH -Append -Encoding utf8
     "latitude:-22.90906,longitude:-47.06455,destinationhost:samplehost,username:lnwbaq,sourcehost:20.195.228.49,state:Sao Paulo,country:Brazil - 20.195.228.49,timestamp:2021-10-26 05:46:20" | Out-File $LOGFILE_PATH -Append -Encoding utf8

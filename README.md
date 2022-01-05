@@ -22,7 +22,7 @@ look up the attackers Geolocation information and plot it on an Azure Sentinel M
 
 - <b>PowerShell:</b> Extract RDP failed logon logs from Windows Event Viewer 
 
-<h2>Environments Used (PaaS Components)</h2>
+<h2>Utilities Used</h2>
 
 - <b>ipgeolocation.io:</b> IP Address to Geolocation API
 

@@ -1,7 +1,8 @@
-﻿# Get API key from here: https://ipgeolocation.io/
-$API_KEY      = "d4600b4efdef42b39828f5155041a457"
-$LOGFILE_NAME = "failed_rdp.log"
-$LOGFILE_PATH = "C:\ProgramData\$($LOGFILE_NAME)"
+# Get API key from here: https://ipgeolocation.io/
+$API_KEY      = "API_KEY_HERE"
+$LOGFILE_RDP = "failed_rdp.log"
+$LOGFILE_PATH = "C:\ProgramData\$($LOGFILE_RDP)"
+
 
 # This filter will be used to filter failed RDP events from Windows Event Viewer
 $XMLFilter = @'
@@ -102,8 +103,12 @@ while ($true)
             # Get the current contents of the Log file!
             $log_contents = Get-Content -Path $LOGFILE_PATH
 
+            do {
+                $currentSecond = (Get-Date).Second
+            } until ($currentSecond % 2 -eq 0)
+
             # Do not write to the log file if the log already exists.
-            if (-Not ($log_contents -match "$($timestamp)") -or ($log_contents.Length -eq 0)) {
+                if (-Not ($log_contents -match "$($timestamp)") -or ($log_contents.Length -eq 0)) {
             
                 # Announce the gathering of geolocation data and pause for a second as to not rate-limit the API
                 #Write-Host "Getting Latitude and Longitude from IP Address and writing to log" -ForegroundColor Yellow -BackgroundColor Black
@@ -119,17 +124,18 @@ while ($true)
                 $latitude = $responseData.latitude
                 $longitude = $responseData.longitude
                 $state_prov = $responseData.state_prov
+                $isp = $responseData.isp
                 if ($state_prov -eq "") { $state_prov = "null" }
                 $country = $responseData.country_name
                 if ($country -eq "") {$country -eq "null"}
 
                 # Write all gathered data to the custom log file. It will look something like this:
                 #
-                "latitude:$($latitude),longitude:$($longitude),destinationhost:$($destinationHost),username:$($username),sourcehost:$($sourceIp),state:$($state_prov), country:$($country),label:$($country) - $($sourceIp),timestamp:$($timestamp)" | Out-File $LOGFILE_PATH -Append -Encoding utf8
+                "latitude:$($latitude),longitude:$($longitude),destinationhost:$($destinationHost),username:$($username),sourcehost:$($sourceIp),state:$($state_prov), country:$($country),label:$($country) - $($sourceIp),timestamp:$($timestamp),ISP:$($isp)" | Out-File $LOGFILE_PATH -Append -Encoding utf8
 
-                Write-Host -BackgroundColor Black -ForegroundColor Magenta "latitude:$($latitude),longitude:$($longitude),destinationhost:$($destinationHost),username:$($username),sourcehost:$($sourceIp),state:$($state_prov),label:$($country) - $($sourceIp),timestamp:$($timestamp)"
+                Write-Host -BackgroundColor Black -ForegroundColor Magenta "latitude:$($latitude),longitude:$($longitude),destinationhost:$($destinationHost),username:$($username),sourcehost:$($sourceIp),state:$($state_prov),label:$($country) - $($sourceIp),timestamp:$($timestamp),ISP:$($isp)"
             }
-            else {
+                else {
                 # Entry already exists in custom log file. Do nothing, optionally, remove the # from the line below for output
                 # Write-Host "Event already exists in the custom log. Skipping." -ForegroundColor Gray -BackgroundColor Black
             }
